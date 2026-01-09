@@ -8,32 +8,33 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
+    public function showRegister(){
+        return view('register');
+    }
     public function register(Request $request){
         $request->validate([
             "name"=>"required",
             "email"=>"required|email|unique:users",
-            "password"=>"required|min:6",
+            "password"=>"required|min:6|confirmed",
         ]);
         User::create([
             "name"=>$request->name,
             "email"=>$request->email,
             "password"=>Hash::make($request->password)
         ]);
-        return response()->json([
-            "message"=>"user registered successfully"
-        ]);
+        return redirect()->route('login')->with('success', 'Account created successfully!');
+    }
+    public function showLogin(){
+        return view('login');
     }
     public function login(Request $request){
         $credentials=$request->only("email","password");
-        if(!$token=Auth::guard('api')->attempt($credentials)){
-            return response()->json([
-                'error'=>'invalid credentials'
-            ],401);
+        if(!Auth::attempt($credentials)){
+            return back()->withErrors(['email'=>'Invalid Credentials'])->withInput();
         }
-        return response()->json([
-            'token'=>$token
-        ]);
-    }
+        $request->session()->regenerate();
+        return redirect()->route('index');
+    }   
     
 }
 

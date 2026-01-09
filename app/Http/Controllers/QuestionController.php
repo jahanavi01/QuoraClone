@@ -1,74 +1,75 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class QuestionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $questions=Question::all();
-        return response()->json($questions);
+        $questions = Question::latest()->get();
+        return view('questions.index', compact('questions'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('questions.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         $request->validate([
-            'title'=>'required|string|max:255',
-            'details'=>'required|string',
+            'title'   => 'required|string|max:255',
+            'details' => 'required|string',
         ]);
-        $question=Question::create([
-            'user_id'=>Auth::id(),
-            'title'=>$request->title,
-            'details'=>$request->details,
+
+        Question::create([
+            'user_id' => Auth::id(),
+            'title'   => $request->title,
+            'details' => $request->details,
         ]);
-        return response()->json($question);
+
+        return redirect()->route('questions.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    
+    public function vote(Request $request, $id)
     {
-        //
+        $request->validate([
+            'direction' => 'required|in:1,-1'
+        ]);
+
+        $question = Question::findOrFail($id);
+
+        $question->votes()->updateOrCreate(
+            ['user_id' => Auth::id()],
+            ['direction' => $request->direction]
+        );
+
+        return back();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    
+    public function follow($id)
     {
-        //
-    }
+        $question = Question::findOrFail($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        $existing = $question->followers()
+            ->where('user_id', Auth::id())
+            ->first();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if ($existing) {
+            $existing->delete(); 
+        } else {
+            $question->followers()->create([
+                'user_id' => Auth::id()
+            ]);
+        }
+
+        return back();
     }
 }

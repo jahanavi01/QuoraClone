@@ -1,27 +1,32 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Support\Facades\Auth;
-use App\Models\Answer;
 use App\Models\Question;
+use App\Models\Answer;
 use Illuminate\Http\Request;
 
 class AnswerController extends Controller
 {
-    public function store(Request $request,$question_id){
-        $request->validate([
-            "body"=>"required|string"
-        ]);
-        $answer=Answer::create([
-            "user_id"=>Auth::id(),
-            "question_id"=>$question_id,
-            "body"=>$request->body,
-        ]);
-        return response()->json($answer);
+    // Show answer form
+    public function create(Question $question)
+    {
+        return view('answers.create', compact('question'));
     }
-    public function destroy($id){
-        
-    }
-}
 
+    // Store answer
+    public function store(Request $request, Question $question)
+    {
+        $request->validate([
+            'body' => 'required|string'
+        ]);
+
+        $question->answers()->create([
+            'user_id' => Auth::id(),
+            'body'    => $request->body
+        ]);
+
+        return redirect()->route('index');
+    }
+    
+}

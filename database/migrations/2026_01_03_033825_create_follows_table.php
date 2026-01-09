@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('questions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId("user_id")->constrained("users")->onDelete("cascade");
-            $table->string("title");
-            $table->text("details")->nullable();
-            $table->timestamps();
-        });
+        Schema::create('follows', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+        $table->morphs('followable');
+        $table->unique(['user_id', 'followable_id', 'followable_type']);
+        $table->timestamps();
+});
+
     }
 
     /**
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('questions');
+        Schema::dropIfExists('follows');
     }
 };

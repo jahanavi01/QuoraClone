@@ -27,9 +27,18 @@ class User extends Authenticatable implements JWTSubject
     public function questions(){
         return $this->hasMany(Question::class);
     }
-    public function Answers(){
+    public function answers(){
         return $this->hasMany(Answer::class);
     }
+    public function votes()
+    {
+        return $this->hasMany(Vote::class);
+    }
+    public function follows()
+    {
+        return $this->hasMany(Follow::class);
+    }
+
 
     /**
      * The attributes that should be hidden for serialization.
