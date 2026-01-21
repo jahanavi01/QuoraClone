@@ -38,6 +38,21 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Follow::class);
     }
+    /* Who follows me */
+    public function followers()
+    {
+        return $this->morphMany(Follow::class, 'followable');
+    }
+
+    /* Check follow status */
+
+public function isFollowing(User $user)
+{
+    return $this->follows()
+        ->where('followable_id', $user->id)
+        ->where('followable_type', User::class)
+        ->exists();
+}
 
 
     /**

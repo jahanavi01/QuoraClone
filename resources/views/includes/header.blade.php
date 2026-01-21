@@ -269,8 +269,7 @@
         <div class="nav-icons">
             <a href="{{ route('index') }}" class="nav-item active" title="Home">🏠</a>
             <a href="{{route( 'questions.index') }}" class="nav-item" title="Questions">❓</a>
-            <a href="#" class="nav-item" title="Topics">✍️</a>
-            <a href="#" class="nav-item" title="Following">👥</a>
+            <a href="{{ route('follow') }}" class="nav-item" title="Following">👥</a>
         </div>
     </div>
     <div class="search-box">
@@ -280,6 +279,7 @@
     <div class="nav-right">
         <span class="user-name">{{ auth()->user()->name }}</span>
         <a href="{{ route('questions.create') }}" class="add-btn" >Add question</a>
+        <a href="{{ route('logout') }}" class="add-btn" >Logout</a>
     </div>
 </div>
 @yield('content')

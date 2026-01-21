@@ -16,5 +16,5 @@ class Answer extends Model
     {
         return $this->morphMany(Vote::class, 'votable');
     }
-
+    
 }

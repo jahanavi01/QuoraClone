@@ -17,11 +17,27 @@
     border: 1px solid #1f1f1f;
 }
 
-.question-card h3 {
+.title {
     color: #ff4d4d;
+    text-decoration: none;
     margin-bottom: 12px;
+    font-weight: bold;
+    margin:15px;
+    font-size: 18px;
 }
-
+.title:hover{
+    text-decoration: underline;
+}
+.replies{
+    color:grey;
+    text-decoration: none;
+    font-weight: bold;
+    margin:15px;
+    margin-top: 20px;
+}
+.replies:hover{
+    text-decoration: underline;
+}
 
 /* ===== Actions ===== */
 .actions {
@@ -30,17 +46,14 @@
     flex-wrap: wrap;
 }
 
-/* Remove form spacing difference */
+
 .actions form {
     margin: 0;
 }
 
-/* Ensure <a> behaves like <button> */
 .actions a.btn {
     line-height: 1;
 }
-
-
 
 /* ===== Follow Button ===== */
 .follow-btn.following {
@@ -53,10 +66,16 @@
 <div class="container">
 
 @foreach($questions as $question)
-<div class="question-card">
+<div class="question-card" id="question-{{ $question->id }}">
 
     <!-- Question -->
-    <h3>{{ $question->title }}</h3>
+    <a href="{{ route('questions.answers', $question->id) }}" class="title">{{ $question->title }}</h3>
+    <br>
+
+    <a href="{{ route('questions.answers', $question->id) }}" class="replies">
+           · {{ $question->answers->count() }} replies
+</a>
+
 
     <!-- Actions -->
     <div class="actions">
@@ -66,7 +85,7 @@
             💬 Answer
         </a>
 
-        {{-- FOLLOW --}}
+        {{-- FOLLOW QUESTION --}}
         @php
             $isFollowing = $question->followers()
                 ->where('user_id', auth()->id())
@@ -75,6 +94,7 @@
 
         <form method="POST" action="{{ route('questions.follow', $question->id) }}">
             @csrf
+            <input type="hidden" name="anchor" value="question-{{ $question->id }}">
             <button class="btn follow-btn {{ $isFollowing ? 'following' : '' }}">
                 {{ $isFollowing ? 'Following' : 'Follow' }}
                 ({{ $question->followers()->count() }})
@@ -85,6 +105,7 @@
         <form method="POST" action="{{ route('questions.vote', $question->id) }}">
             @csrf
             <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="anchor" value="question-{{ $question->id }}">
             <button class="btn">
                 ⬆ {{ $question->votes()->where('direction', 1)->count() }}
             </button>
@@ -94,6 +115,7 @@
         <form method="POST" action="{{ route('questions.vote', $question->id) }}">
             @csrf
             <input type="hidden" name="direction" value="-1">
+            <input type="hidden" name="anchor" value="question-{{ $question->id }}">
             <button class="btn">
                 ⬇ {{ $question->votes()->where('direction', -1)->count() }}
             </button>

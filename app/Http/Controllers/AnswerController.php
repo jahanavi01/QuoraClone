@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 use App\Models\Question;
 use App\Models\Answer;
+use App\Models\Vote;
 use Illuminate\Http\Request;
 
 class AnswerController extends Controller
@@ -28,5 +30,22 @@ class AnswerController extends Controller
 
         return redirect()->route('index');
     }
+
+    // ✅ Upvote / Downvote Answer
+    public function vote(Request $request, Answer $answer)
+{
+    $request->validate([
+        'direction' => 'required|in:1,-1'
+    ]);
+
+    $answer->votes()->updateOrCreate(
+        ['user_id' => Auth::id()],
+        ['direction' => $request->direction]
+    );
+
+    return redirect()->back()->withFragment($request->anchor);
+}
+
+
     
 }
