@@ -218,7 +218,10 @@
         <div class="discover-card">
             <div class="user-row">
                 <img src="{{ asset('images/default-user.png') }}" class="profile-pic">
-                <div class="name">{{ $user->name }}</div>
+                <a href="{{ route('users.show', $user->id) }}" class="name">
+    {{ $user->name }}
+</a>
+
 
                 <form method="POST"
                       action="{{ route('follow.toggle', ['user', $user->id]) }}"

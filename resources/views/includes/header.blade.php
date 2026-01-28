@@ -22,6 +22,7 @@
             height: 60px;
             background: #000;
             display: flex;
+            justify-content: space-between;
             align-items: center;
             padding: 0 30px;
             border-bottom: 1px solid #1f1f1f;
@@ -272,9 +273,7 @@
             <a href="{{ route('follow') }}" class="nav-item" title="Following">👥</a>
         </div>
     </div>
-    <div class="search-box">
-        <input type="text" placeholder="Search Quora">
-    </div>
+    
 
     <div class="nav-right">
         <span class="user-name">{{ auth()->user()->name }}</span>
